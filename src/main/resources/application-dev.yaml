@@ -1,0 +1,23 @@
+spring:
+  config:
+    active:
+      on-profile: dev
+  datasource:
+    url: ${DB_URL}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: create
+      properties:
+        hibernate:
+          show-sql: false
+          format_sql: true
+        dialect: org.hibernate.dialect.MySQL8InnoDBDialect
+
+logging.level:
+  org.hibernate:
+    SQL: debug
+    orm.jdbc.bind: trace
