@@ -1,0 +1,47 @@
+spring:
+  datasource:
+    url: ${DB_URL}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: create
+      properties:
+        hibernate:
+          show-sql: false
+          format_sql: true
+        dialect: org.hibernate.dialect.MySQL8InnoDBDialect
+  security:
+    oauth2:
+      client:
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+        registration:
+          kakao:
+            client-id: ${KAKAO_CLIENT_ID}
+            client-secret: ${KAKAO_CLIENT_SECRET}
+            client-authentication-method: client_secret_post
+            redirect-uri: ${KAKAO_REDIRECT_URI}
+            authorization-grant-type: authorization_code
+            client-name: kakao
+            scope:
+              - profile_nickname
+              - account_email
+
+
+logging.level:
+  org.hibernate:
+    SQL: debug
+    orm.jdbc.bind: trace
+
+jwt:
+  secret-key: ${JWT_SECRET_KEY}
+  expire-hour:
+    access-token: 2
+    refresh-token: 72 # 3일
