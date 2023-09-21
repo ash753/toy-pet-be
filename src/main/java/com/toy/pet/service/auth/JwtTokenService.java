@@ -22,18 +22,13 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class JwtTokenService implements InitializingBean {
+    @Value("${jwt.secret-key}")
     private String jwtSecretKey;
+    @Value("${jwt.expire-hour.access-token}")
     private Integer accessTokenExpireHour;
+    @Value("${jwt.expire-hour.refresh-token}")
     private Integer refreshTokenExpireHour;
     private Key key;
-
-    public JwtTokenService(@Value("${jwt.secret-key}") String jwtSecretKey,
-                           @Value("${jwt.expire-hour.access-token}") Integer accessTokenExpireHour,
-                           @Value("${jwt.expire-hour.refresh-token}") Integer refreshTokenExpireHour) {
-        this.jwtSecretKey = jwtSecretKey;
-        this.accessTokenExpireHour = accessTokenExpireHour;
-        this.refreshTokenExpireHour = refreshTokenExpireHour;
-    }
 
     @Override
     public void afterPropertiesSet() throws Exception {
