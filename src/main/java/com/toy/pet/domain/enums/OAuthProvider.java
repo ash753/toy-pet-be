@@ -1,6 +1,7 @@
 package com.toy.pet.domain.enums;
 
 import com.toy.pet.exception.CommonException;
+import org.springframework.http.HttpStatus;
 import org.springframework.util.ObjectUtils;
 
 public enum OAuthProvider {
@@ -25,7 +26,7 @@ public enum OAuthProvider {
 
     public static OAuthProvider findByCode(String code){
         if (ObjectUtils.isEmpty(code)) {
-            throw new CommonException(ResponseCode.CODE_0002.getCode(), "oauthProvider가 비어있습니다.");
+            throw new CommonException(HttpStatus.BAD_REQUEST, ResponseCode.CODE_0002.getCode(), "oauthProvider가 비어있습니다.");
         }
 
         for (OAuthProvider oauthProvider : OAuthProvider.values()) {
@@ -34,6 +35,6 @@ public enum OAuthProvider {
             }
         }
 
-        throw new CommonException(ResponseCode.CODE_0002.getCode(), "올바르지 않은 OAuthProvider입니다.");
+        throw new CommonException(HttpStatus.BAD_REQUEST, ResponseCode.CODE_0002.getCode(), "올바르지 않은 OAuthProvider입니다.");
     }
 }

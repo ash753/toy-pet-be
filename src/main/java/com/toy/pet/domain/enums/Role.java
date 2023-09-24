@@ -2,6 +2,7 @@ package com.toy.pet.domain.enums;
 
 import com.toy.pet.exception.CommonException;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 import org.springframework.util.ObjectUtils;
 
 @Getter
@@ -19,7 +20,7 @@ public enum Role {
 
     public static Role findByCode(String code){
         if (ObjectUtils.isEmpty(code)) {
-            throw new CommonException(ResponseCode.CODE_0002.getCode(), "Role이 비어있습니다.");
+            throw new CommonException(HttpStatus.BAD_REQUEST, ResponseCode.CODE_0002.getCode(), "Role이 비어있습니다.");
         }
 
         for (Role role : Role.values()) {
@@ -28,6 +29,6 @@ public enum Role {
             }
         }
 
-        throw new CommonException(ResponseCode.CODE_0002.getCode(), "올바르지 않은 Role입니다.");
+        throw new CommonException(HttpStatus.BAD_REQUEST, ResponseCode.CODE_0002.getCode(), "올바르지 않은 Role입니다.");
     }
 }

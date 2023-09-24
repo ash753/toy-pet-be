@@ -4,6 +4,9 @@ import com.toy.pet.domain.common.Result;
 import com.toy.pet.domain.enums.ResponseCode;
 import com.toy.pet.domain.enums.StatusCode;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -12,14 +15,23 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class DefaultExceptionHandler {
 
     @ExceptionHandler(CommonException.class)
-    public Result handleCommonException(CommonException e) {
+    public ResponseEntity<Result> handleCommonException(CommonException e) {
         log.error("", e);
-        return new Result(StatusCode.FAILURE, e.getCode(), e.getMessage());
+        Result result = new Result(StatusCode.FAILURE, e.getCode(), e.getMessage());
+        return new ResponseEntity<>(result, e.getStatusCode());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Result> handleConstraintViolationException(MethodArgumentNotValidException e){
+        log.error("", e);
+        Result result = new Result(StatusCode.FAILURE, ResponseCode.CODE_0003.getCode(), e.getMessage());
+        return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
-    public Result handelException(Exception e) {
+    public ResponseEntity<Result> handelException(Exception e) {
         log.error("", e);
-        return new Result(StatusCode.FAILURE, ResponseCode.CODE_0001.getCode(), ResponseCode.CODE_0001.getMessage());
+        Result result = new Result(StatusCode.FAILURE, ResponseCode.CODE_0001.getCode(), ResponseCode.CODE_0001.getMessage());
+        return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

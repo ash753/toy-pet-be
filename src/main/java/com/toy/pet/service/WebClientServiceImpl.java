@@ -1,7 +1,7 @@
 package com.toy.pet.service;
 
-import com.toy.pet.service.WebclientService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.ObjectUtils;
@@ -15,7 +15,7 @@ import java.util.Set;
 public class WebClientServiceImpl implements WebclientService {
 
     @Override
-    public <T> T getRequest(String uri, MultiValueMap<String, String> headerMap, Class<T> responseType) {
+    public <T> ResponseEntity<T> getRequest(String uri, MultiValueMap<String, String> headerMap, Class<T> responseType) {
         WebClient.Builder webclientBuilder = WebClient.builder()
                 .baseUrl(uri);
 
@@ -31,7 +31,7 @@ public class WebClientServiceImpl implements WebclientService {
 
         return webClient.get()
                 .retrieve()
-                .bodyToMono(responseType)
+                .toEntity(responseType)
                 .block();
     }
 }

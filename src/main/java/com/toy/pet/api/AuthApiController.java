@@ -1,7 +1,6 @@
 package com.toy.pet.api;
 
 import com.toy.pet.domain.common.Result;
-import com.toy.pet.domain.common.User;
 import com.toy.pet.domain.enums.OAuthProvider;
 import com.toy.pet.domain.enums.StatusCode;
 import com.toy.pet.domain.request.LoginRequest;
@@ -12,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +36,7 @@ public class AuthApiController {
     )
     @PostMapping("/login/oauth")
     public Result oauthLogin(
-            @RequestBody LoginRequest loginRequest) {
+            @Valid @RequestBody LoginRequest loginRequest) {
         LoginResponse loginResponse = authService.issueJwtToken(OAuthProvider.findByCode(loginRequest.getProvider()),
                 loginRequest.getAccessToken());
         return new Result(StatusCode.SUCCESS, loginResponse);

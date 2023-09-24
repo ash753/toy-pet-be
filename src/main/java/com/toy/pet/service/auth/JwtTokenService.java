@@ -10,6 +10,7 @@ import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
@@ -80,11 +81,11 @@ public class JwtTokenService implements InitializingBean {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            throw new CommonException(ResponseCode.CODE_0011);
+            throw new CommonException(HttpStatus.BAD_REQUEST, ResponseCode.CODE_0011);
         } catch (IllegalArgumentException | UnsupportedJwtException e) {
-            throw new CommonException(ResponseCode.CODE_0012);
+            throw new CommonException(HttpStatus.BAD_REQUEST, ResponseCode.CODE_0012);
         } catch (ExpiredJwtException e) {
-            throw new CommonException(ResponseCode.CODE_0013);
+            throw new CommonException(HttpStatus.UNAUTHORIZED, ResponseCode.CODE_0013);
         }
     }
 
