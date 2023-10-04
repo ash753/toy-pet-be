@@ -1,18 +1,23 @@
 spring:
+  profiles:
+    active: test
+  config:
+    active:
+      on-profile: test
   datasource:
-    url: ${DB_URL}
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: jdbc:h2:mem:testdb;MODE=MySQL;
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
   jpa:
     open-in-view: false
     hibernate:
       ddl-auto: create
-      properties:
-        hibernate:
-          show-sql: false
-          format_sql: true
-        dialect: org.hibernate.dialect.MySQL8InnoDBDialect
+    properties:
+      hibernate:
+#        show_sql: false
+        format_sql: true
+      dialect: org.hibernate.dialect.MySQL8InnoDBDialect
   security:
     oauth2:
       client:
@@ -36,12 +41,11 @@ spring:
 
 
 logging.level:
-  org.hibernate:
-    SQL: debug
-    orm.jdbc.bind: trace
+  org.hibernate.SQL: debug # 로그로 찍힌다.
+  org.hibernate.orm.jdbc.bind: trace # 쿼리 파라미터 관련 설정
 
 jwt:
-  secret-key: ${JWT_SECRET_KEY}
+  secret-key: testjwtkeytestjwtkeytestjwtkeytestjwtkeytestjwtkeytestjwtkeytestjwtkeytestjwtkeytestjwtkeytestjwtkeytestjwtkeytestjwtkey
   expire-hour:
     access-token: 2
     refresh-token: 72 # 3일
