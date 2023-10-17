@@ -1,5 +1,6 @@
 package com.toy.pet.domain.common;
 
+import com.toy.pet.domain.entity.Member;
 import com.toy.pet.domain.enums.Role;
 import lombok.Getter;
 import lombok.ToString;
@@ -10,13 +11,12 @@ import java.util.List;
 @Getter
 public class User {
     private Long id;
-    private String name;
+    private String username;
     private List<Role> roleList;
 
-
-    public User(Long id, String name, List<Role> roleList) {
-        this.id = id;
-        this.name = name;
-        this.roleList = roleList;
+    public User(Member member) {
+        this.id = member.getId();
+        this.username = member.getName();
+        this.roleList = List.of(member.getRole());
     }
 }

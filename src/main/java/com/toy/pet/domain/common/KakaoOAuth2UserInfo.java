@@ -1,9 +1,5 @@
 package com.toy.pet.domain.common;
 
-
-import com.toy.pet.domain.enums.Role;
-
-import java.util.Arrays;
 import java.util.Map;
 
 public class KakaoOAuth2UserInfo extends OAuth2UserInfo {
@@ -17,14 +13,15 @@ public class KakaoOAuth2UserInfo extends OAuth2UserInfo {
     }
 
     @Override
-    public String getName() {
+    public String getNickName() {
         Map<String, Object> profileMap = (Map<String, Object>) getKakaoAccount().get("profile");
         return profileMap.get("nickname").toString();
     }
 
     @Override
-    public User createUser() {
-        return new User(getId(), getName(), Arrays.asList(Role.USER));
+    public String getProfileImageUrl() {
+        Map<String, Object> profileMap = (Map<String, Object>) getKakaoAccount().get("profile");
+        return profileMap.get("profile_image_url").toString();
     }
 
     private Map<String, Object> getKakaoAccount(){
