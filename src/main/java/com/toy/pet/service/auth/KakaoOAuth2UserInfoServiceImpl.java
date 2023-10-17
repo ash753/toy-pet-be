@@ -9,6 +9,7 @@ import com.toy.pet.exception.CommonException;
 import com.toy.pet.service.WebclientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -39,7 +40,7 @@ public class KakaoOAuth2UserInfoServiceImpl implements OAuth2UserInfoService {
 
     private Map<String, Object> getUserAttributesByAccessToken(String accessToken) {
         MultiValueMap<String, String> headerMap = new LinkedMultiValueMap<>();
-        headerMap.put(Constant.AUTHORIZATION, Arrays.asList("Bearer "+accessToken));
+        headerMap.put(HttpHeaders.AUTHORIZATION, Arrays.asList("Bearer "+accessToken));
         Map<String, Object> result = new HashMap<>();
         try {
             ResponseEntity<? extends Map> response = webclientService.getRequest(kakaoUserInfoUri, headerMap, result.getClass());

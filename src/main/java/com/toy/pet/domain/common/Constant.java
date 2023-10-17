@@ -4,6 +4,5 @@ import lombok.Getter;
 
 @Getter
 public class Constant {
-
-    public final static String AUTHORIZATION = "Authorization";
+    public static final String BEARER = "Bearer ";
 }

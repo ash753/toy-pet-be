@@ -8,7 +8,7 @@ import org.springframework.util.ObjectUtils;
 @Getter
 public enum Role {
 
-    USER("USER", "일반 사용자");
+    ROLE_USER("ROLE_USER", "일반 사용자");
 
     private String code;
     private String name;
