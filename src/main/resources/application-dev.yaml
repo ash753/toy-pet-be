@@ -38,6 +38,13 @@ spring:
               - profile_nickname
               - profile_image
               - account_email
+  servlet:
+    multipart:
+      enabled: true # 멀티파트 업로드 지원여부 (default: true)
+      file-size-threshold: 0B # 파일을 디스크에 저장하지 않고 메모리에 저장하는 최소 크기 (default: 0B)
+      #location: /users/charming/temp # 업로드된 파일이 임시로 저장되는 디스크 위치 (default: WAS가 결정)
+      max-file-size: 1MB # 한개 파일의 최대 사이즈 (default: 1MB)
+      max-request-size: 20MB # 한개 요청의 최대 사이즈 (default: 10MB)
 
 
 logging.level:
@@ -49,3 +56,17 @@ jwt:
   expire-hour:
     access-token: 2
     refresh-token: 72 # 3일
+
+
+cloud:
+  aws:
+    s3:
+      bucket: ${S3_BUCKET_NAME}
+    credentials:
+      access-key: ${S3_ACCESS_KEY}
+      secret-key: ${S3_SECRET_KEY}
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false # EC2에서 Spring Cloud 프로젝트를 실행시키면 기본으로 CloudFormation 구성을 시작하기 때문에 설정한 CloudFormation이 없으면 프로젝트 실행이 되지 않는다. 해당 기능을 사용하지 않도록 false로 설정.

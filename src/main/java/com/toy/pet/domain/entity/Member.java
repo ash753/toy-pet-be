@@ -1,7 +1,10 @@
 package com.toy.pet.domain.entity;
 
+import com.toy.pet.domain.common.Constant;
 import com.toy.pet.domain.enums.OAuthProvider;
+import com.toy.pet.domain.enums.ResponseCode;
 import com.toy.pet.domain.enums.Role;
+import com.toy.pet.exception.CommonException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -9,8 +12,11 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Where;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 
 import java.time.LocalDateTime;
+import java.util.regex.Pattern;
 
 @Table(name = "members")
 @Getter
@@ -44,6 +50,10 @@ public class Member extends BaseEntity{
     public Member(String nickname, String email, String name, com.toy.pet.domain.enums.OAuthProvider oauthProvider,
                   Long oauthId, Role role) {
         this.nickname = nickname;
+
+        if (!Pattern.matches(Constant.EMAIL_REGEX, email)) {
+            throw new CommonException(HttpStatus.BAD_REQUEST, ResponseCode.CODE_0018);
+        }
         this.email = email;
         this.name = name;
         this.oauthProvider = oauthProvider;
