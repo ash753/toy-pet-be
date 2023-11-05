@@ -16,6 +16,12 @@ public class CommonException extends ResponseStatusException {
         this.message = responseCode.getMessage();
     }
 
+    public CommonException(HttpStatusCode status, ResponseCode responseCode, Throwable cause) {
+        super(status, responseCode.getMessage(), cause);
+        this.code = responseCode.getCode();
+        this.message = responseCode.getMessage();
+    }
+
     public CommonException(HttpStatusCode status, String code, String message) {
         super(status);
         this.code = code;
