@@ -1,16 +1,24 @@
 package com.toy.pet.service.member;
 
+import com.toy.pet.domain.common.User;
 import com.toy.pet.domain.entity.Member;
+import com.toy.pet.domain.entity.Pet;
 import com.toy.pet.domain.enums.OAuthProvider;
 import com.toy.pet.domain.enums.ResponseCode;
 import com.toy.pet.domain.enums.Role;
 import com.toy.pet.domain.request.MemberRegisterRequest;
 import com.toy.pet.exception.CommonException;
 import com.toy.pet.repository.MemberRepository;
+import com.toy.pet.service.pet.PetProfileImageService;
+import com.toy.pet.service.pet.PetService;
+import com.toy.pet.service.term.TermService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
@@ -20,7 +28,10 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final ProfileImageService profileImageService;
+    private final TermService termService;
+    private final PetService petService;
+    private final MemberProfileImageService memberProfileImageService;
+    private final PetProfileImageService petProfileImageService;
 
     /**
      * 회원 가입
@@ -30,18 +41,24 @@ public class MemberService {
      * 3. 프로필 이미지 저장
      */
     @Transactional
-    public void registerMember(MemberRegisterRequest memberRegisterRequest, String nickName, Long oauthId,
-                               String profileImageUrl) {
-        OAuthProvider oAuthProvider = OAuthProvider.findByCode(memberRegisterRequest.getProvider());
-
+    public void registerMember(MemberRegisterRequest memberRegisterRequest, Long oauthId,
+                               MultipartFile memberProfileImage, MultipartFile petProfileImage) {
+        OAuthProvider oAuthProvider = memberRegisterRequest.getProvider();
         if (existMember(oAuthProvider, oauthId)) {
             throw new CommonException(HttpStatus.BAD_REQUEST, ResponseCode.CODE_0015);
         }
+        Member savedMember = memberRepository.save(memberRegisterRequest.toEntity(oauthId, Role.ROLE_USER));
 
-        Member member = memberRegisterRequest.toEntity(nickName, oauthId, Role.ROLE_USER);
-        memberRepository.save(member);
+        termService.saveMemberTerm(memberRegisterRequest.getTermRegisterRequestList(), savedMember);
 
-        profileImageService.saveProfileImage(member, profileImageUrl);
+        Pet savedPet = petService.registerPetAndConnectMember(memberRegisterRequest.getSharingCode(),
+                memberRegisterRequest.getPetRegisterRequest(), savedMember, memberRegisterRequest.getRelationship());
+
+
+
+        memberProfileImageService.saveMemberProfileImage(savedMember, memberProfileImage);
+        petProfileImageService.savePetProfileImage(memberRegisterRequest.getSharingCode(),
+                savedPet, petProfileImage, savedMember.getId());
     }
 
     /**
@@ -69,6 +86,5 @@ public class MemberService {
                 .orElseThrow(() -> new CommonException(HttpStatus.BAD_REQUEST, ResponseCode.CODE_0016));
 
         member.delete(deleteMemberId);
-        profileImageService.deleteMemberProfileImageList(member, deleteMemberId);
     }
 }

@@ -34,7 +34,7 @@ public class AuthApiController {
     @PostMapping("/login/oauth")
     public Result oauthLogin(
             @Valid @RequestBody LoginRequest loginRequest) {
-        LoginResponse loginResponse = authService.issueJwtToken(OAuthProvider.findByCode(loginRequest.getProvider()),
+        LoginResponse loginResponse = authService.issueJwtToken(loginRequest.getProvider(),
                 loginRequest.getAccessToken());
         return new Result(StatusCode.SUCCESS, loginResponse);
     }

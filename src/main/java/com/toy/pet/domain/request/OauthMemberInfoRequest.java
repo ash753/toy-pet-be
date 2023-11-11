@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Getter
-public class LoginRequest {
-
+public class OauthMemberInfoRequest {
     @NotNull
     @Schema(description = "OAuth provider 정보", example = "KAKAO")
     private OAuthProvider provider;
