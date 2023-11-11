@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.stream.Collectors;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/enumerations")
@@ -37,7 +37,8 @@ public class EnumerationApiController {
             schema = @Schema(allowableValues = {"DOG_BREED", "CAT_BREED"}), in = ParameterIn.QUERY)
             @RequestParam("enumerationCategory") String enumerationCategory){
 
-        EnumerationResponseListDto enumerationResponseListDto = enumerationService.findEnumerationResponseListDto(enumerationCategory);
-        return new Result(StatusCode.SUCCESS, enumerationResponseListDto);
+        List<EnumerationResponseDto> enumerationResponseDtoList = enumerationService
+                .findEnumerationResponseDtoList(EnumerationCategory.findByCode(enumerationCategory));
+        return new Result(StatusCode.SUCCESS, new EnumerationResponseListDto(enumerationResponseDtoList));
     }
 }

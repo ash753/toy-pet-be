@@ -2,11 +2,14 @@ package com.toy.pet.service.pet;
 
 import com.toy.pet.domain.entity.Member;
 import com.toy.pet.domain.entity.Pet;
+import com.toy.pet.domain.enums.EnumerationCategory;
 import com.toy.pet.domain.enums.Relationship;
 import com.toy.pet.domain.enums.ResponseCode;
 import com.toy.pet.domain.request.PetRegisterRequest;
+import com.toy.pet.domain.response.EnumerationResponseDto;
 import com.toy.pet.exception.CommonException;
 import com.toy.pet.repository.PetRepository;
+import com.toy.pet.service.enumeration.EnumerationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -14,6 +17,8 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -22,6 +27,8 @@ public class PetService {
     private final PetRepository petRepository;
 
     private final MemberPetService memberPetService;
+
+    private final EnumerationService enumerationService;
 
     public Pet registerPetAndConnectMember(String sharingCode, PetRegisterRequest petRegisterRequest,
                                             Member member, Relationship relationship) {
@@ -43,6 +50,7 @@ public class PetService {
         }
 
         pet = petRegisterRequest.toEntity(member);
+        checkPetBreed(pet);
         petRepository.save(pet);
         pet.generateSharingCode();
         return pet;
@@ -58,5 +66,26 @@ public class PetService {
         return petOptional.orElseThrow(() ->{
             return new CommonException(HttpStatus.BAD_REQUEST, ResponseCode.CODE_0080);
         });
+    }
+
+    public void checkPetBreed(Pet pet) {
+        EnumerationCategory enumerationCategory = null;
+        switch (pet.getPetType()) {
+            case CAT -> {
+                enumerationCategory = EnumerationCategory.CAT_BREED;
+            }
+            case DOG -> {
+                enumerationCategory = EnumerationCategory.DOG_BREED;
+            }
+        }
+
+
+        Set<String> codeSet = enumerationService.findEnumerationResponseDtoList(enumerationCategory)
+                .stream()
+                .map(EnumerationResponseDto::getCode).collect(Collectors.toSet());
+
+        if (!codeSet.contains(pet.getBreed())) {
+            throw new CommonException(HttpStatus.BAD_REQUEST, ResponseCode.CODE_0083);
+        }
     }
 }
