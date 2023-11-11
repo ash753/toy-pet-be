@@ -5,6 +5,7 @@ import com.toy.pet.domain.common.Result;
 import com.toy.pet.domain.enums.StatusCode;
 import com.toy.pet.domain.request.OauthMemberInfoRequest;
 import com.toy.pet.domain.request.MemberRegisterRequest;
+import com.toy.pet.domain.response.MemberRegisterResponse;
 import com.toy.pet.domain.response.OauthMemberInfoResponse;
 import com.toy.pet.service.auth.AuthService;
 import com.toy.pet.service.member.MemberService;
@@ -53,9 +54,9 @@ public class MemberApiController {
     public Result registerMember(@Valid @RequestPart MemberRegisterRequest memberRegisterRequest,
                                  @RequestPart(required = false) MultipartFile memberProfileImage,
                                  @RequestPart(required = false) MultipartFile petProfileImage) {
-        authService.registerMember(memberRegisterRequest.getProvider(), memberRegisterRequest,
-                memberProfileImage, petProfileImage);
-        return new Result(StatusCode.SUCCESS);
+        MemberRegisterResponse memberRegisterResponse = authService.registerMember(memberRegisterRequest.getProvider(),
+                memberRegisterRequest, memberProfileImage, petProfileImage);
+        return new Result(StatusCode.SUCCESS, memberRegisterResponse);
     }
 
     @Operation(summary = "회원 탈퇴",

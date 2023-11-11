@@ -15,6 +15,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,9 +23,9 @@ public class PetProfileImageService {
     private final PetProfileImageRepository petProfileImageRepository;
     private final FileManagementService fileManagementService;
 
-    public void savePetProfileImage(String sharingCode, Pet pet, MultipartFile petProfileImage, Long memberId) {
+    public Optional<PetProfileImage> savePetProfileImage(String sharingCode, Pet pet, MultipartFile petProfileImage, Long memberId) {
         if (ObjectUtils.isEmpty(petProfileImage) || petProfileImage.isEmpty()) {
-            return;
+            return Optional.empty();
         }
 
         // 반려동물 코드가 없는 경우만 반려동물의 프로필을 등록할 수 있다.
@@ -42,5 +43,7 @@ public class PetProfileImageService {
                 fileUploadResultVO.getUploadFileUrl(), memberId);
 
         petProfileImageRepository.save(savedPetProfileImageEntity);
+
+        return Optional.of(savedPetProfileImageEntity);
     }
 }

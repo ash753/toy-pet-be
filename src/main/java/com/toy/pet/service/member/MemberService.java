@@ -3,10 +3,12 @@ package com.toy.pet.service.member;
 import com.toy.pet.domain.common.User;
 import com.toy.pet.domain.entity.Member;
 import com.toy.pet.domain.entity.Pet;
+import com.toy.pet.domain.entity.PetProfileImage;
 import com.toy.pet.domain.enums.OAuthProvider;
 import com.toy.pet.domain.enums.ResponseCode;
 import com.toy.pet.domain.enums.Role;
 import com.toy.pet.domain.request.MemberRegisterRequest;
+import com.toy.pet.domain.response.MemberRegisterResponse;
 import com.toy.pet.exception.CommonException;
 import com.toy.pet.repository.MemberRepository;
 import com.toy.pet.service.pet.PetProfileImageService;
@@ -41,8 +43,8 @@ public class MemberService {
      * 3. 프로필 이미지 저장
      */
     @Transactional
-    public void registerMember(MemberRegisterRequest memberRegisterRequest, Long oauthId,
-                               MultipartFile memberProfileImage, MultipartFile petProfileImage) {
+    public MemberRegisterResponse registerMember(MemberRegisterRequest memberRegisterRequest, Long oauthId,
+                                                 MultipartFile memberProfileImage, MultipartFile petProfileImage) {
         OAuthProvider oAuthProvider = memberRegisterRequest.getProvider();
         if (existMember(oAuthProvider, oauthId)) {
             throw new CommonException(HttpStatus.BAD_REQUEST, ResponseCode.CODE_0015);
@@ -57,8 +59,10 @@ public class MemberService {
 
 
         memberProfileImageService.saveMemberProfileImage(savedMember, memberProfileImage);
-        petProfileImageService.savePetProfileImage(memberRegisterRequest.getSharingCode(),
-                savedPet, petProfileImage, savedMember.getId());
+        Optional<PetProfileImage> savedPetProfileImage = petProfileImageService.savePetProfileImage(
+                memberRegisterRequest.getSharingCode(), savedPet, petProfileImage, savedMember.getId());
+
+        return new MemberRegisterResponse(savedPet, savedPetProfileImage.orElse(null));
     }
 
     /**

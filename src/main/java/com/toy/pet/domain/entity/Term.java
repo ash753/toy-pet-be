@@ -21,8 +21,10 @@ public class Term extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(updatable = false)
     private String title;
 
+    @Column(updatable = false)
     private String description;
 
     private boolean required;

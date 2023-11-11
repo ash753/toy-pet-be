@@ -4,6 +4,7 @@ package com.toy.pet.service.auth;
 import com.toy.pet.domain.enums.OAuthProvider;
 import com.toy.pet.domain.request.MemberRegisterRequest;
 import com.toy.pet.domain.response.LoginResponse;
+import com.toy.pet.domain.response.MemberRegisterResponse;
 import com.toy.pet.domain.response.OauthMemberInfoResponse;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,8 +13,8 @@ public interface AuthService {
 
     LoginResponse reissueJwtToken(String refreshToken);
 
-    void registerMember(OAuthProvider oAuthProvider, MemberRegisterRequest memberRegisterRequest,
-                        MultipartFile memberProfileImage, MultipartFile petProfileImage);
+    MemberRegisterResponse registerMember(OAuthProvider oAuthProvider, MemberRegisterRequest memberRegisterRequest,
+                                          MultipartFile memberProfileImage, MultipartFile petProfileImage);
 
     OauthMemberInfoResponse getOauthMemberInfoResponse(OAuthProvider oAuthProvider, String accessToken);
 }

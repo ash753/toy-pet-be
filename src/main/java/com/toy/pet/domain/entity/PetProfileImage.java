@@ -2,6 +2,7 @@ package com.toy.pet.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 @Where(clause = "delete_yn = 0")
 @DynamicInsert
 @DynamicUpdate
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PetProfileImage extends BaseEntity{
 

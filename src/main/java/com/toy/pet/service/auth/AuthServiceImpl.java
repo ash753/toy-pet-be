@@ -7,6 +7,7 @@ import com.toy.pet.domain.enums.OAuthProvider;
 import com.toy.pet.domain.enums.ResponseCode;
 import com.toy.pet.domain.request.MemberRegisterRequest;
 import com.toy.pet.domain.response.LoginResponse;
+import com.toy.pet.domain.response.MemberRegisterResponse;
 import com.toy.pet.domain.response.OauthMemberInfoResponse;
 import com.toy.pet.exception.CommonException;
 import com.toy.pet.service.member.MemberService;
@@ -59,13 +60,13 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void registerMember(OAuthProvider oAuthProvider, MemberRegisterRequest memberRegisterRequest,
-                               MultipartFile memberProfileImage, MultipartFile petProfileImage) {
+    public MemberRegisterResponse registerMember(OAuthProvider oAuthProvider, MemberRegisterRequest memberRegisterRequest,
+                                                 MultipartFile memberProfileImage, MultipartFile petProfileImage) {
         for (OAuth2UserInfoService oAuth2UserInfoService : oAuth2UserInfoServiceList) {
             if (oAuth2UserInfoService.supports(oAuthProvider)) {
                 OAuth2UserInfo oAuth2UserInfo = oAuth2UserInfoService.getOAuth2UserInfo(memberRegisterRequest.getAccessToken());
-                memberService.registerMember(memberRegisterRequest, oAuth2UserInfo.getId(), memberProfileImage, petProfileImage);
-                return;
+                return memberService.registerMember(memberRegisterRequest,
+                        oAuth2UserInfo.getId(), memberProfileImage, petProfileImage);
             }
         }
         throw new IllegalStateException("No OAuth2UserInfoService for parameter OAuthProvider parameter : "+ oAuthProvider);
