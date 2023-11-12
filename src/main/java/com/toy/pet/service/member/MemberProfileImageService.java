@@ -12,6 +12,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -36,5 +37,9 @@ public class MemberProfileImageService {
                 fileUploadResultVO.getUploadFilePath(), fileUploadResultVO.getUploadFileUrl());
 
         memberProfileImageRepository.save(savedMemberProfileImageEntity);
+    }
+
+    public List<MemberProfileImage> findMemberProfileImage(Member member) {
+        return memberProfileImageRepository.findByMember(member);
     }
 }

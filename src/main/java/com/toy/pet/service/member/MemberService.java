@@ -2,12 +2,15 @@ package com.toy.pet.service.member;
 
 import com.toy.pet.domain.common.User;
 import com.toy.pet.domain.entity.Member;
+import com.toy.pet.domain.entity.MemberProfileImage;
 import com.toy.pet.domain.entity.Pet;
 import com.toy.pet.domain.entity.PetProfileImage;
 import com.toy.pet.domain.enums.OAuthProvider;
+import com.toy.pet.domain.enums.Relationship;
 import com.toy.pet.domain.enums.ResponseCode;
 import com.toy.pet.domain.enums.Role;
 import com.toy.pet.domain.request.MemberRegisterRequest;
+import com.toy.pet.domain.response.MemberDetailResponseDto;
 import com.toy.pet.domain.response.MemberRegisterResponse;
 import com.toy.pet.exception.CommonException;
 import com.toy.pet.repository.MemberRepository;
@@ -22,6 +25,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -79,6 +83,23 @@ public class MemberService {
 
     public boolean existMember(OAuthProvider oAuthProvider, Long OAuthId) {
         return memberRepository.findMemberByOauthProviderAndOauthId(oAuthProvider, OAuthId).isPresent();
+    }
+
+    public MemberDetailResponseDto getMemberDetail(Long memberId) {
+        Member member = getMember(memberId);
+        List<MemberProfileImage> memberProfileImageList = memberProfileImageService.findMemberProfileImage(member);
+        if (memberProfileImageList.size() > 1) {
+            throw new IllegalStateException("member는 하나의 프로필 이미지만 가질 수 있습니다");
+        }
+
+        Pet pet = petService.findPetByMember(member);
+
+        Relationship relationShip = petService.findRelationShip(member, pet);
+
+        return new MemberDetailResponseDto(
+                ObjectUtils.isEmpty(memberProfileImageList) ? null : memberProfileImageList.get(0).getImageUrl(),
+                member.getName(),
+                relationShip.getCode(), relationShip.getName());
     }
 
     /**

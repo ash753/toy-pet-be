@@ -5,6 +5,7 @@ import com.toy.pet.domain.common.Result;
 import com.toy.pet.domain.enums.StatusCode;
 import com.toy.pet.domain.request.OauthMemberInfoRequest;
 import com.toy.pet.domain.request.MemberRegisterRequest;
+import com.toy.pet.domain.response.MemberDetailResponseDto;
 import com.toy.pet.domain.response.MemberRegisterResponse;
 import com.toy.pet.domain.response.OauthMemberInfoResponse;
 import com.toy.pet.service.auth.AuthService;
@@ -26,6 +27,17 @@ import org.springframework.web.multipart.MultipartFile;
 public class MemberApiController {
     private final AuthService authService;
     private final MemberService memberService;
+
+    @Operation(summary = "회원 정보 상세 조회", description = "access token에 해당하는 사용자의 정보 조회",
+            responses = {
+                    @ApiResponse(responseCode = "200",
+                            content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = MemberDetailResponseDto.class))})
+            })
+    @GetMapping("/detail")
+    public Result getMemberDetail(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+        MemberDetailResponseDto memberDetail = memberService.getMemberDetail(principalDetails.getMemberId());
+        return new Result(StatusCode.SUCCESS, memberDetail);
+    }
 
     @Operation(summary = "oauth 회원 정보 조회 API", description = "회원가입 전 사용자 정보 조회에 사용하는 API 입니다. " +
             "OAuth access token을 입력 받으면, 회원 정보를 반환합니다.",
