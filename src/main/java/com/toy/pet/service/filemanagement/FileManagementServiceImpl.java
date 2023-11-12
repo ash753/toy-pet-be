@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -36,6 +37,10 @@ public class FileManagementServiceImpl implements FileManagementService{
             throw new IllegalArgumentException("there is no multipart file");
         }
 
+        if (!StringUtils.hasText(uploadFilePath)) {
+            throw new IllegalArgumentException("uploadFilePath must not be empty");
+        }
+
         final String originalFileName = multipartFile.getOriginalFilename();
         final String uploadFileName = getUuidFileName(originalFileName);
 
@@ -54,7 +59,7 @@ public class FileManagementServiceImpl implements FileManagementService{
             PutObjectResponse putObjectResponse = s3Client.putObject(putObjectRequest, requestBody);
         } catch (IOException e) {
             log.error("", e);
-            throw new CommonException(HttpStatus.INTERNAL_SERVER_ERROR, ResponseCode.CODE_0041, e);
+            throw new CommonException(HttpStatus.INTERNAL_SERVER_ERROR, ResponseCode.CODE_0040, e);
         }
 
         GetUrlRequest getUrlRequest = GetUrlRequest.builder()
@@ -77,6 +82,17 @@ public class FileManagementServiceImpl implements FileManagementService{
         s3Client.deleteObject(deleteObjectRequest);
     }
 
+    @Override
+    public void validationCheckForImageFile(MultipartFile multipartFile) {
+        String filenameExtension = StringUtils.getFilenameExtension(multipartFile.getOriginalFilename());
+        if (StringUtils.hasText(filenameExtension) &&
+                (filenameExtension.startsWith("jpeg") || filenameExtension.startsWith("png")
+                        || filenameExtension.startsWith("gif") || filenameExtension.startsWith("svg"))) {
+            return;
+        }
+
+        throw new CommonException(HttpStatus.BAD_REQUEST, ResponseCode.CODE_0041);
+    }
 
     /**
      * UUID 파일명 반환

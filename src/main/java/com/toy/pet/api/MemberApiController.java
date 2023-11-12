@@ -2,10 +2,12 @@ package com.toy.pet.api;
 
 import com.toy.pet.domain.common.PrincipalDetails;
 import com.toy.pet.domain.common.Result;
-import com.toy.pet.domain.entity.Member;
-import com.toy.pet.domain.enums.OAuthProvider;
 import com.toy.pet.domain.enums.StatusCode;
+import com.toy.pet.domain.request.OauthMemberInfoRequest;
 import com.toy.pet.domain.request.MemberRegisterRequest;
+import com.toy.pet.domain.response.MemberDetailResponseDto;
+import com.toy.pet.domain.response.MemberRegisterResponse;
+import com.toy.pet.domain.response.OauthMemberInfoResponse;
 import com.toy.pet.service.auth.AuthService;
 import com.toy.pet.service.member.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/v1/members")
@@ -24,6 +27,32 @@ import org.springframework.web.bind.annotation.*;
 public class MemberApiController {
     private final AuthService authService;
     private final MemberService memberService;
+
+    @Operation(summary = "회원 정보 상세 조회", description = "access token에 해당하는 사용자의 정보 조회",
+            responses = {
+                    @ApiResponse(responseCode = "200",
+                            content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = MemberDetailResponseDto.class))})
+            })
+    @GetMapping("/detail")
+    public Result getMemberDetail(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+        MemberDetailResponseDto memberDetail = memberService.getMemberDetail(principalDetails.getMemberId());
+        return new Result(StatusCode.SUCCESS, memberDetail);
+    }
+
+    @Operation(summary = "oauth 회원 정보 조회 API", description = "회원가입 전 사용자 정보 조회에 사용하는 API 입니다. " +
+            "OAuth access token을 입력 받으면, 회원 정보를 반환합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200",
+                            content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = OauthMemberInfoResponse.class))})
+            }
+    )
+    @PostMapping("/oauth-info")
+    public Result getOauthMemberInfo(@Valid @RequestBody OauthMemberInfoRequest oauthMemberInfoRequest) {
+        OauthMemberInfoResponse oauthMemberInfoResponse = authService.getOauthMemberInfoResponse(oauthMemberInfoRequest.getProvider(),
+                oauthMemberInfoRequest.getAccessToken());
+        return new Result(StatusCode.SUCCESS, oauthMemberInfoResponse);
+    }
+
 
     // 회원 가입
     @Operation(summary = "OAuth 회원가입 API",
@@ -33,24 +62,13 @@ public class MemberApiController {
                             content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = Result.class))})
             }
     )
-    @PostMapping("/register/oauth")
-    public Result registerMember(@Valid @RequestBody MemberRegisterRequest memberRegisterRequest) {
-        authService.registerMember(OAuthProvider.findByCode(memberRegisterRequest.getProvider()), memberRegisterRequest);
-        return new Result(StatusCode.SUCCESS);
-    }
-
-    @Operation(summary = "내 정보 조회 - 테스트용",
-            description = "Access token에 담겨있는 id로 내 정보를 조회합니다",
-            responses = {
-                    @ApiResponse(responseCode = "200",
-                            content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = Result.class))})
-            }
-    )
-    @GetMapping("/my-info")
-    public Result getMyInfo(@AuthenticationPrincipal PrincipalDetails principalDetails) {
-        Long memberId = principalDetails.getMemberId();
-        Member member = memberService.getMember(memberId);
-        return new Result(StatusCode.SUCCESS, member);
+    @PostMapping(value = "/register/oauth", consumes =  {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public Result registerMember(@Valid @RequestPart MemberRegisterRequest memberRegisterRequest,
+                                 @RequestPart(required = false) MultipartFile memberProfileImage,
+                                 @RequestPart(required = false) MultipartFile petProfileImage) {
+        MemberRegisterResponse memberRegisterResponse = authService.registerMember(memberRegisterRequest.getProvider(),
+                memberRegisterRequest, memberProfileImage, petProfileImage);
+        return new Result(StatusCode.SUCCESS, memberRegisterResponse);
     }
 
     @Operation(summary = "회원 탈퇴",

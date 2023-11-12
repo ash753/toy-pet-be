@@ -42,7 +42,10 @@ public class SecurityConfig {
                             .requestMatchers(new MvcRequestMatcher(handlerMappingIntrospector, "/")).permitAll()
                             .requestMatchers(new MvcRequestMatcher(handlerMappingIntrospector, "/api/v1/auth/login/**")).permitAll()
                             .requestMatchers(new MvcRequestMatcher(handlerMappingIntrospector, "/api/v1/auth/reissue")).permitAll()
+                            .requestMatchers(new MvcRequestMatcher(handlerMappingIntrospector, "/api/v1/members/oauth-info")).permitAll()
                             .requestMatchers(new MvcRequestMatcher(handlerMappingIntrospector, "/api/v1/members/register/**")).permitAll()
+                            .requestMatchers(new MvcRequestMatcher(handlerMappingIntrospector, "/api/v1/terms/member-register")).permitAll()
+                            .requestMatchers(new MvcRequestMatcher(handlerMappingIntrospector, "/api/v1/enumerations")).permitAll()
                             .anyRequest().authenticated();
                 })
                 .oauth2Login(httpSecurityOAuth2LoginConfigurer -> httpSecurityOAuth2LoginConfigurer

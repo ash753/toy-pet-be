@@ -6,26 +6,27 @@ import org.springframework.http.HttpStatus;
 import org.springframework.util.ObjectUtils;
 
 @Getter
-public enum Role {
+public enum Gender {
 
-    ROLE_USER("ROLE_USER", "일반 사용자");
+    MALE("MALE", "수컷"),
+    FEMALE("FEMALE", "암컷");
 
     private String code;
     private String name;
 
-    Role(String code, String name) {
+    Gender(String code, String name) {
         this.code = code;
         this.name = name;
     }
 
-    public static Role findByCode(String code){
+    public static Gender findByCode(String code){
         if (ObjectUtils.isEmpty(code)) {
             throw new CommonException(HttpStatus.BAD_REQUEST, ResponseCode.CODE_0002);
         }
 
-        for (Role role : Role.values()) {
-            if (role.code.equals(code)) {
-                return role;
+        for (Gender gender : Gender.values()) {
+            if (gender.code.equals(code)) {
+                return gender;
             }
         }
 
