@@ -23,4 +23,9 @@ public class TermRegisterRequest {
 
         return new MemberTerm(member, term, agree);
     }
+
+    public TermRegisterRequest(Long id, Boolean agree) {
+        this.id = id;
+        this.agree = agree;
+    }
 }

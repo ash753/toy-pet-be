@@ -37,6 +37,10 @@ public class FileManagementServiceImpl implements FileManagementService{
             throw new IllegalArgumentException("there is no multipart file");
         }
 
+        if (!StringUtils.hasText(uploadFilePath)) {
+            throw new IllegalArgumentException("uploadFilePath must not be empty");
+        }
+
         final String originalFileName = multipartFile.getOriginalFilename();
         final String uploadFileName = getUuidFileName(originalFileName);
 

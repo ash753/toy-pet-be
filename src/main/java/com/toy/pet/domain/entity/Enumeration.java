@@ -29,4 +29,10 @@ public class Enumeration extends BaseEntity{
     private String name;
 
     private boolean deleteYn;
+
+    public Enumeration(EnumerationCategory enumerationCategory, String code, String name) {
+        this.enumerationCategory = enumerationCategory;
+        this.code = code;
+        this.name = name;
+    }
 }

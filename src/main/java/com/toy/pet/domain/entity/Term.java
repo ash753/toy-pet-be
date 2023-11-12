@@ -30,4 +30,10 @@ public class Term extends BaseEntity{
     private boolean required;
 
     private boolean deleteYn;
+
+    public Term(String title, String description, boolean required) {
+        this.title = title;
+        this.description = description;
+        this.required = required;
+    }
 }
