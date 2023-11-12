@@ -10,6 +10,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 @Slf4j
 @RestControllerAdvice
@@ -33,6 +34,14 @@ public class DefaultExceptionHandler {
     public ResponseEntity<Result> handleHttpMessageNotReadableException(HttpMessageNotReadableException e){
         log.error("", e);
         Result result = new Result(StatusCode.FAILURE, ResponseCode.CODE_0004.getCode(), e.getMessage());
+        return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<Result> handleHttpMessageNotReadableException(MaxUploadSizeExceededException e){
+        log.error("", e);
+        Result result = new Result(StatusCode.FAILURE, ResponseCode.CODE_0042.getCode(),
+                ResponseCode.CODE_0042.getMessage());
         return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
     }
 

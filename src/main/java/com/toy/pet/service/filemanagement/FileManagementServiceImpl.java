@@ -86,7 +86,8 @@ public class FileManagementServiceImpl implements FileManagementService{
     public void validationCheckForImageFile(MultipartFile multipartFile) {
         String filenameExtension = StringUtils.getFilenameExtension(multipartFile.getOriginalFilename());
         if (StringUtils.hasText(filenameExtension) &&
-                (filenameExtension.startsWith("image") || filenameExtension.startsWith("png"))) {
+                (filenameExtension.startsWith("jpeg") || filenameExtension.startsWith("png")
+                        || filenameExtension.startsWith("gif") || filenameExtension.startsWith("svg"))) {
             return;
         }
 
