@@ -101,7 +101,7 @@ public class PetService {
     }
 
     public Pet findPetByMember(Member member) {
-        List<MemberPet> memberPetList = memberPetService.findPet(member);
+        List<MemberPet> memberPetList = memberPetService.findMemberPet(member);
         if (ObjectUtils.isEmpty(memberPetList) || memberPetList.size() > 1) {
             throw new IllegalStateException("멤버는 하나의 반려동물 만을 가져야만 합니다.");
         }
@@ -139,5 +139,9 @@ public class PetService {
         return new PetDetailResponseDto(
                 ObjectUtils.isEmpty(petProfileImageList) ? null : petProfileImageList.get(0).getImageUrl(),
                 pet, breed);
+    }
+
+    public void deleteMemberPet(Member member) {
+        memberPetService.deleteMemberPet(member);
     }
 }

@@ -1,6 +1,5 @@
 package com.toy.pet.service.member;
 
-import com.toy.pet.domain.common.User;
 import com.toy.pet.domain.entity.Member;
 import com.toy.pet.domain.entity.MemberProfileImage;
 import com.toy.pet.domain.entity.Pet;
@@ -22,7 +21,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -110,6 +108,9 @@ public class MemberService {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new CommonException(HttpStatus.BAD_REQUEST, ResponseCode.CODE_0016));
 
-        member.delete(deleteMemberId);
+        memberProfileImageService.deleteMemberProfileImage(member);
+        termService.deleteMemberTerm(member);
+        petService.deleteMemberPet(member);
+        memberRepository.delete(member);
     }
 }

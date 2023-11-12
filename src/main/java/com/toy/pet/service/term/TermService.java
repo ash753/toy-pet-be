@@ -57,4 +57,11 @@ public class TermService {
             }
         }
     }
+
+
+    @Transactional
+    public void deleteMemberTerm(Member member) {
+        List<MemberTerm> memberTermList = memberTermRepository.findAllByMember(member);
+        memberTermList.forEach(memberTermRepository::delete);
+    }
 }

@@ -50,10 +50,4 @@ public class Member extends BaseEntity{
         this.createdBy = 1L;
         this.updatedBy = 1L;
     }
-
-    public void delete(Long deleteMemberId) {
-        this.deleteYn = true;
-        this.updatedBy = deleteMemberId;
-        this.updatedAt = LocalDateTime.now();
-    }
 }

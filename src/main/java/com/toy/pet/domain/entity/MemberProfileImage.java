@@ -44,10 +44,4 @@ public class MemberProfileImage extends BaseEntity{
         this.createdBy = member.getId();
         this.updatedBy = member.getId();
     }
-
-    public void delete(Long deleteMemberId) {
-        this.deleteYn = true;
-        this.updatedBy = deleteMemberId;
-        this.updatedAt = LocalDateTime.now();
-    }
 }

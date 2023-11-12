@@ -8,7 +8,6 @@ import com.toy.pet.repository.MemberPetRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 
@@ -23,11 +22,16 @@ public class MemberPetService {
         memberPetRepository.save(memberPet);
     }
 
-    public List<MemberPet> findPet(Member member) {
+    public List<MemberPet> findMemberPet(Member member) {
         return memberPetRepository.findAllByMember(member);
     }
 
     public List<MemberPet> findRelationShip(Member member, Pet pet) {
         return memberPetRepository.findAllByMemberAndPet(member, pet);
+    }
+
+    public void deleteMemberPet(Member member) {
+        List<MemberPet> memberPetList = findMemberPet(member);
+        memberPetList.forEach(memberPetRepository::delete);
     }
 }

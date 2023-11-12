@@ -42,4 +42,9 @@ public class MemberProfileImageService {
     public List<MemberProfileImage> findMemberProfileImage(Member member) {
         return memberProfileImageRepository.findByMember(member);
     }
+
+    public void deleteMemberProfileImage(Member member) {
+        List<MemberProfileImage> memberProfileImageList = memberProfileImageRepository.findByMember(member);
+        memberProfileImageList.forEach(memberProfileImageRepository::delete);
+    }
 }
